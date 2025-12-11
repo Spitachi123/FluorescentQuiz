@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Participants</title>
+  <link rel="stylesheet" href="quiz.css">
+  <link rel="stylesheet" href="quiz1.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    #students {
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .student-card {
+      display: inline-block;
+      margin: 20px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      position: relative; /* for badge positioning */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: bounceIn 0.6s ease;
+    }
+    .student-card:hover {
+      transform: scale(1.1) rotate(1deg);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    /* Image box replacing emoji */
+    .avatar-img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #fff;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+      margin-bottom: 10px;
+      transition: transform 0.3s ease;
+    }
+    .student-card:hover .avatar-img {
+      transform: scale(1.05);
+    }
+
+    /* Brighter House colors */
+    .red-house { background: #ff4d4d; }
+    .blue-house { background: #3399ff; }
+    .yellow-house { background: #ffd633; }
+    .green-house { background: #33cc66; }
+
+    /* Captain badge */
+    .captain-badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: linear-gradient(45deg, gold, orange);
+      color: #333;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 6px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      animation: pulse 1.5s infinite;
+    }
+
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #ddd;
+      display: none;
+      width: 340px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+    }
+    #popup h3 {
+      margin: 0;
+      font-size: 24px;
+      color: #2c3e50;
+    }
+    #popup p {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #555;
+      line-height: 1.4em;
+    }
+    #popup button {
+      margin-top: 15px;
+      padding: 10px 18px;
+      border: none;
+      background: #3399ff;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    #popup button:hover {
+      background: #267acc;
+    }
+
+    .extraBtn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+      transition: transform 0.2s ease;
+    }
+    .extraBtn:hover {
+      transform: scale(1.1);
+    }
+    .red-btn { background: #ff4d4d; color: #fff; }
+    .blue-btn { background: #3399ff; color: #fff; }
+    .yellow-btn { background: #ffd633; color: #333; }
+    .green-btn { background: #33cc66; color: #fff; }
+
+    /* Animations */
+    @keyframes bounceIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      60% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <center>
+    <div class="circle" id="generalcrcl1"></div>
+    <div class="main">
+      <div class="questions">
+        <label><a href="index.html"><i class="fa-solid fa-arrow-left fa-beat"></i> Participants</a></label><br>
+        <hr width="90%" size="3px" color="grey"><br>
+        <button class="extraBtn red-btn" onclick="showStudents('red')"> Red House</button><br><br>
+        <button class="extraBtn blue-btn" onclick="showStudents('blue')"> Blue House</button><br><br>
+        <button class="extraBtn yellow-btn" onclick="showStudents('yellow')"> Yellow House</button><br><br>
+        <button class="extraBtn green-btn" onclick="showStudents('green')"> Green House </button>
+      </div>
+
+      <div class="right">
+        <div id="students"></div>
+        <br><br><br>
+        <div id="popup">
+          <h3 id="popupName"></h3>
+          <p id="popupInfo"></p>
+          <button onclick="closePopup()">Close</button>
+        </div>
+      </div>
+    </div>
+    <div class="circle" id="generalcrcl2"></div>
+  </center>
+</body>
+  <script>
+  /* Student Data */
+  const houseData = {
+    red: [
+      {name:"Krischal Adhikari", info:"Krischal is house captain"},
+      {name:"Kalpit Pandey", info:"Kalpit Pandey is a member."},
+      {name:"Bibek Marattha", info:"Bibek Marattha is a member."}
+    ],
+    blue: [
+      {name:"Abinash lamsal", info:"Abinash is a captain."},
+      {name:"Aayush Sitaula", info:"Aayush is a member."},
+      {name:"Swashat Pandey", info:"Swashat is a group member."}
+    ],
+    yellow: [
+      {name:"Raman Ghimire", info:"Raman is a house captain."},
+      {name:"Ankit Dhakal", info:"Ankit is group member."},
+      {name:"Sanjaya Dhamala", info:"Sanjaya is a member."}
+    ],
+    green: [
+      {name:"Ankit Pathak", info:"Ankit is house captain."},
+      {name:"Sanjok Silwal", info:"Sanjok is a member."},
+      {name:"Aaysh Rawal", info:"Aayush is a member."}
+    ]
+  };
+
+  /* Image Mapping Section */
+  const studentImages = {
+    "Krischal Adhikari": "boy.jpg",
+    "Kalpit Pandey": "images/kalpit.jpg",
+    "Bibek Marattha": "images/bibek.jpg",
+    "Abinash lamsal": "images/abinash.jpg",
+    "Aayush Sitaula": "images/aayush.jpg",
+    "Swashat Pandey": "images/swashat.jpg",
+    "Raman Ghimire": "images/raman.jpg",
+    "Ankit Dhakal": "images/ankit_d.jpg",
+    "Sanjaya Dhamala": "images/sanjaya.jpg",
+    "Ankit Pathak": "images/ankit_p.jpg",
+    "Sanjok Silwal": "images/sanjok.jpg",
+    "Aaysh Rawal": "images/aayush_r.jpg"
+  };
+
+  function showStudents(house) {
+    const container = document.getElementById("students");
+    container.innerHTML = "";
+    container.style.display = "block";
+
+    houseData[house].forEach(student => {
+      const isCaptain = student.info.toLowerCase().includes("captain");
+      const imgSrc = studentImages[student.name] || "images/default.jpg"; // fallback image
+
+      container.innerHTML += `
+        <div class="student-card" onclick="openPopup('${student.name}', '${student.info}')">
+          <img src="${imgSrc}" alt="${student.name}" class="avatar-img ${house}-house">
+          ${isCaptain ? '<div class="captain-badge">Captain</div>' : ''}
+          <p>${student.name}</p>
+        </div>
+      `;
+    });
+  }
+
+  function openPopup(name, info) {
+    document.getElementById("popupName").innerText = name;
+    document.getElementById("popupInfo").innerText = info;
+    document.getElementById("popup").style.display = "block";
+  }
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+  }
+</script>
+</html>
